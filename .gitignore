@@ -1,24 +1,500 @@
-# Compiled class file
-*.class
+public class Student {
 
-# Log file
-*.log
+    private int id;
+    private String name;
+    private int age;
+    private String major;
+    private double gpa;
 
-# BlueJ files
-*.ctxt
+    public Student(int id, String name, int age, String major, double gpa) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.major = major;
+        this.gpa = gpa;
+    }
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+    // Getters
+    public int getId() {
+        return id;
+    }
 
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
+    public String getName() {
+        return name;
+    }
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+    public int getAge() {
+        return age;
+    }
+
+    public String getMajor() {
+        return major;
+    }
+
+    public double getGpa() {
+        return gpa;
+    }
+
+    // Setters
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public void setMajor(String major) {
+        this.major = major;
+    }
+
+    public void setGpa(double gpa) {
+        this.gpa = gpa;
+    }
+
+    @Override
+    public String toString() {
+        return "\nStudent Information"
+                + "\n-------------------------"
+                + "\nID    : " + id
+                + "\nName  : " + name
+                + "\nAge   : " + age
+                + "\nMajor : " + major
+                + "\nGPA   : " + gpa;
+    }
+}
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+public class StudentManager {
+
+    private ArrayList<Student> students;
+
+    public StudentManager() {
+        students = new ArrayList<>();
+    }
+
+    // Add Student
+    public boolean addStudent(Student student) {
+
+        for (Student s : students) {
+            if (s.getId() == student.getId()) {
+                return false;
+            }
+        }
+
+        students.add(student);
+        return true;
+    }
+
+    // Delete Student
+    public boolean removeStudent(int id) {
+
+        for (Student s : students) {
+            if (s.getId() == id) {
+                students.remove(s);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Search Student
+    public Student searchStudent(int id) {
+
+        for (Student s : students) {
+            if (s.getId() == id) {
+                return s;
+            }
+        }
+
+        return null;
+    }
+
+    // Edit Student
+    public boolean editStudent(int id,
+                               String name,
+                               int age,
+                               String major,
+                               double gpa) {
+
+        Student student = searchStudent(id);
+
+        if (student == null)
+            return false;
+
+        student.setName(name);
+        student.setAge(age);
+        student.setMajor(major);
+        student.setGpa(gpa);
+
+        return true;
+    }
+
+    // Display All Students
+    public void displayStudents() {
+
+        if (students.isEmpty()) {
+            System.out.println("No students found.");
+            return;
+        }
+
+        for (Student s : students) {
+            System.out.println(s);
+            System.out.println("-------------------------");
+        }
+    }
+
+    // Highest GPA
+    public Student highestStudent() {
+
+        if (students.isEmpty())
+            return null;
+
+        Student highest = students.get(0);
+
+        for (Student s : students) {
+
+            if (s.getGpa() > highest.getGpa()) {
+                highest = s;
+            }
+
+        }
+
+        return highest;
+    }
+
+    // Lowest GPA
+    public Student lowestStudent() {
+
+        if (students.isEmpty())
+            return null;
+
+        Student lowest = students.get(0);
+
+        for (Student s : students) {
+
+            if (s.getGpa() < lowest.getGpa()) {
+                lowest = s;
+            }
+
+        }
+
+        return lowest;
+    }
+
+    // Sort by GPA
+    public void sortByGPA() {
+
+        Collections.sort(students,
+                Comparator.comparingDouble(Student::getGpa).reversed());
+
+    }
+
+    // Number of Students
+    public int getStudentCount() {
+        return students.size();
+    }
+
+    // Average GPA
+    public double averageGPA() {
+
+        if (students.isEmpty())
+            return 0;
+
+        double sum = 0;
+
+        for (Student s : students) {
+            sum += s.getGpa();
+        }
+
+        return sum / students.size();
+    }
+
+    // Display Statistics
+    public void displayStatistics() {
+
+        System.out.println("\n===== Statistics =====");
+
+        System.out.println("Students : " + getStudentCount());
+
+        System.out.printf("Average GPA : %.2f\n", averageGPA());
+
+        Student highest = highestStudent();
+
+        Student lowest = lowestStudent();
+
+        if (highest != null) {
+
+            System.out.println("Highest GPA : "
+                    + highest.getName()
+                    + " (" + highest.getGpa() + ")");
+
+            System.out.println("Lowest GPA : "
+                    + lowest.getName()
+                    + " (" + lowest.getGpa() + ")");
+        }
+
+    }
+
+    public ArrayList<Student> getStudents() {
+        return students;
+    }
+
+}
+import java.io.*;
+import java.util.ArrayList;
+
+public class FileManager {
+
+    private static final String FILE_NAME = "students.txt";
+
+    // Save students to file
+    public static void saveStudents(ArrayList<Student> students) {
+
+        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME))) {
+
+            for (Student student : students) {
+
+                writer.println(
+                        student.getId() + "," +
+                        student.getName() + "," +
+                        student.getAge() + "," +
+                        student.getMajor() + "," +
+                        student.getGpa()
+                );
+
+            }
+
+            System.out.println("Students saved successfully.");
+
+        } catch (IOException e) {
+
+            System.out.println("Error while saving data.");
+
+        }
+
+    }
+
+    // Load students from file
+    public static ArrayList<Student> loadStudents() {
+
+        ArrayList<Student> students = new ArrayList<>();
+
+        File file = new File(FILE_NAME);
+
+        if (!file.exists()) {
+            return students;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+
+                String[] data = line.split(",");
+
+                int id = Integer.parseInt(data[0]);
+                String name = data[1];
+                int age = Integer.parseInt(data[2]);
+                String major = data[3];
+                double gpa = Double.parseDouble(data[4]);
+
+                students.add(new Student(id, name, age, major, gpa));
+
+            }
+
+        } catch (IOException e) {
+
+            System.out.println("Error while loading data.");
+
+        }
+
+        return students;
+    }
+
+}
+public StudentManager() {
+    students = FileManager.loadStudents();
+}
+public void saveData() {
+    FileManager.saveStudents(students);
+}
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Scanner input = new Scanner(System.in);
+        StudentManager manager = new StudentManager();
+
+        int choice;
+
+        do {
+
+            System.out.println("\n========== Student Management System ==========");
+            System.out.println("1. Add Student");
+            System.out.println("2. Delete Student");
+            System.out.println("3. Edit Student");
+            System.out.println("4. Search Student");
+            System.out.println("5. Display Students");
+            System.out.println("6. Sort by GPA");
+            System.out.println("7. Highest GPA");
+            System.out.println("8. Lowest GPA");
+            System.out.println("9. Statistics");
+            System.out.println("10. Save");
+            System.out.println("11. Exit");
+            System.out.print("Choose: ");
+
+            choice = input.nextInt();
+
+            switch (choice) {
+
+                case 1:
+
+                    System.out.print("ID: ");
+                    int id = input.nextInt();
+                    input.nextLine();
+
+                    System.out.print("Name: ");
+                    String name = input.nextLine();
+
+                    System.out.print("Age: ");
+                    int age = input.nextInt();
+                    input.nextLine();
+
+                    System.out.print("Major: ");
+                    String major = input.nextLine();
+
+                    System.out.print("GPA: ");
+                    double gpa = input.nextDouble();
+
+                    Student student = new Student(id, name, age, major, gpa);
+
+                    if (manager.addStudent(student))
+                        System.out.println("Student added successfully.");
+                    else
+                        System.out.println("Student ID already exists.");
+
+                    break;
+
+                case 2:
+
+                    System.out.print("Enter ID: ");
+                    id = input.nextInt();
+
+                    if (manager.removeStudent(id))
+                        System.out.println("Student deleted.");
+                    else
+                        System.out.println("Student not found.");
+
+                    break;
+
+                case 3:
+
+                    System.out.print("Enter Student ID: ");
+                    id = input.nextInt();
+                    input.nextLine();
+
+                    System.out.print("New Name: ");
+                    name = input.nextLine();
+
+                    System.out.print("New Age: ");
+                    age = input.nextInt();
+                    input.nextLine();
+
+                    System.out.print("New Major: ");
+                    major = input.nextLine();
+
+                    System.out.print("New GPA: ");
+                    gpa = input.nextDouble();
+
+                    if (manager.editStudent(id, name, age, major, gpa))
+                        System.out.println("Student updated.");
+                    else
+                        System.out.println("Student not found.");
+
+                    break;
+
+                case 4:
+
+                    System.out.print("Enter Student ID: ");
+                    id = input.nextInt();
+
+                    Student result = manager.searchStudent(id);
+
+                    if (result != null)
+                        System.out.println(result);
+                    else
+                        System.out.println("Student not found.");
+
+                    break;
+
+                case 5:
+
+                    manager.displayStudents();
+                    break;
+
+                case 6:
+
+                    manager.sortByGPA();
+                    System.out.println("Students sorted by GPA.");
+                    manager.displayStudents();
+
+                    break;
+
+                case 7:
+
+                    Student highest = manager.highestStudent();
+
+                    if (highest != null)
+                        System.out.println(highest);
+                    else
+                        System.out.println("No students.");
+
+                    break;
+
+                case 8:
+
+                    Student lowest = manager.lowestStudent();
+
+                    if (lowest != null)
+                        System.out.println(lowest);
+                    else
+                        System.out.println("No students.");
+
+                    break;
+
+                case 9:
+
+                    manager.displayStatistics();
+                    break;
+
+                case 10:
+
+                    manager.saveData();
+                    break;
+
+                case 11:
+
+                    manager.saveData();
+                    System.out.println("Goodbye!");
+                    break;
+
+                default:
+
+                    System.out.println("Invalid choice.");
+
+            }
+
+        } while (choice != 11);
+
+        input.close();
+
+    }
+
+}
